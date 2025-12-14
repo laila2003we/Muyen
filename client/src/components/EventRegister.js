@@ -30,10 +30,13 @@ export function EventRegister() {
 
       if (res.ok) {
         // تحديث Redux state مباشرة
-        eventDispatch({ type: "events/registerEvent/fulfilled", payload: data.event });
+        eventDispatch({
+          type: "events/registerEvent/fulfilled",
+          payload: data.event,
+        });
 
         alert("Event registration successful!");
-        navigate("/profile");
+        navigate("/settings");
       } else {
         alert(data.error || "Registration failed");
       }
@@ -47,15 +50,29 @@ export function EventRegister() {
     <div className="event-register-page">
       <div className="event-register-container">
         <h1>Register for Event</h1>
-        <input type="text" placeholder="Your Name" value={name} onChange={(e) => setName(e.target.value)} />
-        <input type="text" placeholder="Phone Number" value={phone} onChange={(e) => setPhone(e.target.value)} />
+        <input
+          type="text"
+          placeholder="Your Name"
+          value={name}
+          onChange={(e) => setName(e.target.value)}
+        />
+        <input
+          type="text"
+          placeholder="Phone Number"
+          value={phone}
+          onChange={(e) => setPhone(e.target.value)}
+        />
         <select value={eventId} onChange={(e) => setEventId(e.target.value)}>
           <option value="">Select Event</option>
           {events.map((ev) => (
-            <option key={ev.id} value={ev.id}>{ev.title}</option>
+            <option key={ev.id} value={ev.id}>
+              {ev.title}
+            </option>
           ))}
         </select>
-        <button className="btn-register" onClick={handleSubmit}>Submit</button>
+        <button className="btn-register" onClick={handleSubmit}>
+          Submit
+        </button>
       </div>
     </div>
   );

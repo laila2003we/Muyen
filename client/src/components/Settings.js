@@ -10,7 +10,7 @@ export function Settings() {
   const navigate = useNavigate();
   const [events, setEvents] = useState([]);
   const [loading, setLoading] = useState(true);
-
+  const [savedJobs, setSavedJobs] = useState([]);
   // 🔹 Fetch events from MongoDB
   useEffect(() => {
     const fetchEvents = async () => {
@@ -62,6 +62,14 @@ export function Settings() {
   const handleEdit = (event) => {
     navigate("/update-event", { state: { event } });
   };
+  useEffect(() => {
+    const fetchSavedJobs = async () => {
+      const res = await fetch(`http://localhost:3001/api/saved-jobs/${user}`);
+      const data = await res.json();
+      setSavedJobs(data);
+    };
+    fetchSavedJobs();
+  }, [user]);
 
   return (
     <div className="settings-page">
@@ -115,6 +123,13 @@ export function Settings() {
           </ul>
         )}
       </div>
+      <h2>Saved Jobs</h2>
+      {savedJobs.map((job) => (
+        <div key={job._id}>
+          <h3>{job.jobId.title}</h3>
+          <p>{job.jobId.company}</p>
+        </div>
+      ))}
     </div>
   );
 }

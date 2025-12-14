@@ -4,9 +4,12 @@ import mongoose from "mongoose";
 import EventModel from "./models/eventModel.js";
 import UserModel from "./models/userModel.js"; // مهم جداً
 import * as ENV from "./config.js";
+import SavedJobModel from "./models/SavedJobModel.js";
+import jobRoutes from "./routes/jobRoutes.js";
 
 const app = express();
 app.use(express.json());
+app.use("/api", jobRoutes);
 //Middleware
 
 const corsOptions = {
@@ -99,9 +102,9 @@ app.post("/login", async (req, res) => {
 // });
 app.post("/registerEvent", async (req, res) => {
   try {
-    const { name, phone, eventId, date, location, userId } = req.body;
+    const { name, phone, eventId } = req.body;
 
-    if (!name || !phone || !eventId || !userId) {
+    if (!name || !phone || !eventId) {
       return res.status(400).json({ error: "All fields required" });
     }
 
@@ -109,9 +112,9 @@ app.post("/registerEvent", async (req, res) => {
       name,
       phone,
       eventId,
-      date,
-      location,
-      userId,
+      // date,
+      // location,
+      // userId,
     });
 
     await newEvent.save();
@@ -175,7 +178,67 @@ app.get("/events/user/:userId", async (req, res) => {
   }
 });
 
-// -------------------------------------------------------------
+// app.get("/places", async (req, res) => {
+//   try {
+//     const places = await PlaceModel.find(); // from MongoDB
+//     res.json({ places });
+//   } catch (err) {
+//     console.log(err);
+//     res.status(500).json({ error: "Server error" });
+//   }
+// });
+app.post("/saved_jobs", async (req, res) => {
+  try {
+    const { name, jobId } = req.body;
+
+    if (!name || !jobId)
+      return res.status(400).json({ error: "All fields required" });
+
+    const exists = await SavedJobModel.findOne({
+      name,
+      jobId: job.id,
+    });
+
+    if (exists) return res.status(400).json({ error: "Job already saved" });
+
+    const savedJob = new SavedJobModel({
+      name,
+      jobId: job.id,
+      // title: job.title,
+      // company: job.company,
+      // location: job.location,
+      // salary: job.salary,
+      // type: job.type,
+    });
+
+    await savedJob.save();
+    res.status(201).json({ msg: "Job saved successfully" });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "Server error" });
+  }
+});
+app.get("/saved_jobs/:name", async (req, res) => {
+  try {
+    const jobs = await SavedJobModel.find({
+      name: req.params.name,
+    });
+
+    res.status(200).json({ jobs });
+  } catch (err) {
+    res.status(500).json({ error: "Server error" });
+  }
+});
+
+app.delete("/saved_jobs/:id", async (req, res) => {
+  try {
+    await SavedJobModel.findByIdAndDelete(req.params.id);
+    res.json({ msg: "Job removed" });
+  } catch (err) {
+    res.status(500).json({ error: "Server error" });
+  }
+});
+
 const port = ENV.PORT || 3001;
 app.listen(port, () => {
   console.log(`You are connected at port: ${port}`);

@@ -5,7 +5,7 @@ export const registerSchema = yup.object().shape({
   name: yup
     .string()
     .required("Name is required")
-    .min(3, "Name must be at least 3 characters"),
+    .min(5, "Name must be at least 5 characters"),
   email: yup.string().email("Invalid email").required("Email is required"),
   password: yup
     .string()

@@ -66,61 +66,102 @@
 //   );
 // }
 
-import React from "react";
-import { useNavigate } from "react-router-dom";
-import { ArrowLeft } from "lucide-react";
-import { useAppContext } from "../Store/store";
-import avatarImg from "../Images/avatar.png";
-import "./Profile.css";
+// import React from "react";
+// import { useNavigate } from "react-router-dom";
+// import { ArrowLeft } from "lucide-react";
+// import { useAppContext } from "../Store/store";
+// import avatarImg from "../Images/avatar.png";
+// import "./Profile.css";
+
+// export default function Profile() {
+//   const { user } = useAppContext();
+//   const navigate = useNavigate();
+
+//   // Safety check (not logged in)
+//   if (!user) {
+//     return (
+//       <div className="profile-page">
+//         <p>You are not logged in.</p>
+//       </div>
+//     );
+//   }
+
+//   return (
+//     <div className="profile-page">
+//       {/* Header */}
+//       <div className="profile-header">
+//         <button className="back-btn" onClick={() => navigate("/home")}>
+//           <ArrowLeft size={20} /> Back
+//         </button>
+//         <h1>Profile</h1>
+//       </div>
+
+//       {/* Avatar */}
+//       <div className="profile-avatar">
+//         <img src={avatarImg} alt="User Avatar" />
+//       </div>
+
+//       {/* User Info */}
+//       <div className="profile-info">
+//         <div className="info-row">
+//           <span className="label">Name</span>
+//           <span className="value">{user.name}</span>
+//         </div>
+
+//         <div className="info-row">
+//           <span className="label">Email</span>
+//           <span className="value">{user.email}</span>
+//         </div>
+
+//         {/* Optional phone (future-proof) */}
+//         {user.phone && (
+//           <div className="info-row">
+//             <span className="label">Phone</span>
+//             <span className="value">{user.phone}</span>
+//           </div>
+//         )}
+//       </div>
+//     </div>
+//   );
+// }
+
+import React, { useEffect, useState } from "react";
+import { useAppContext } from "../Store/store"; // assuming you have a context providing the logged-in user
 
 export default function Profile() {
-  const { user } = useAppContext();
-  const navigate = useNavigate();
+  const { user } = useAppContext(); // get logged-in user
+  const [savedJobs, setSavedJobs] = useState([]);
 
-  // Safety check (not logged in)
-  if (!user) {
-    return (
-      <div className="profile-page">
-        <p>You are not logged in.</p>
-      </div>
-    );
-  }
+  useEffect(() => {
+    if (!user?._id) return; // wait until user is loaded
+
+    const fetchSavedJobs = async () => {
+      try {
+        const res = await fetch(
+          `http://localhost:3001/api/saved-jobs/${user._id}`
+        );
+        const data = await res.json();
+        setSavedJobs(data);
+      } catch (err) {
+        console.error(err);
+      }
+    };
+
+    fetchSavedJobs();
+  }, [user]);
+
+  if (!user) return <p>Loading user...</p>;
 
   return (
-    <div className="profile-page">
-      {/* Header */}
-      <div className="profile-header">
-        <button className="back-btn" onClick={() => navigate("/home")}>
-          <ArrowLeft size={20} /> Back
-        </button>
-        <h1>Profile</h1>
-      </div>
-
-      {/* Avatar */}
-      <div className="profile-avatar">
-        <img src={avatarImg} alt="User Avatar" />
-      </div>
-
-      {/* User Info */}
-      <div className="profile-info">
-        <div className="info-row">
-          <span className="label">Name</span>
-          <span className="value">{user.name}</span>
+    <div>
+      <h2>Saved Jobs for {user.name}</h2>
+      {savedJobs.length === 0 && <p>No saved jobs yet.</p>}
+      {savedJobs.map((job) => (
+        <div key={job._id}>
+          <h3>{job.jobId.title}</h3>
+          <p>{job.jobId.company}</p>
         </div>
-
-        <div className="info-row">
-          <span className="label">Email</span>
-          <span className="value">{user.email}</span>
-        </div>
-
-        {/* Optional phone (future-proof) */}
-        {user.phone && (
-          <div className="info-row">
-            <span className="label">Phone</span>
-            <span className="value">{user.phone}</span>
-          </div>
-        )}
-      </div>
+      ))}
     </div>
   );
 }
