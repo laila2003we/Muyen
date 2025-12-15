@@ -5,11 +5,11 @@ import EventModel from "./models/eventModel.js";
 import UserModel from "./models/UserModel.js"; // مهم جداً
 import * as ENV from "./config.js";
 import SavedJobModel from "./models/SavedJobModel.js";
-import jobRoutes from "./routes/jobRoutes.js";
+//import jobRoutes from "./routes/jobRoutes.js";
 
 const app = express();
 app.use(express.json());
-app.use("/api", jobRoutes);
+//app.use("/api", jobRoutes);
 //Middleware
 
 const corsOptions = {
