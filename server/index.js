@@ -2,7 +2,7 @@ import express from "express";
 import cors from "cors";
 import mongoose from "mongoose";
 import EventModel from "./models/eventModel.js";
-import UserModel from "./models/UserModel.js"; // مهم جداً
+import UserModel from "./models/UserModel.js"; 
 import * as ENV from "./config.js";
 
 const app = express();
