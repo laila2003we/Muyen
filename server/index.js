@@ -2,7 +2,7 @@ import express from "express";
 import cors from "cors";
 import mongoose from "mongoose";
 import EventModel from "./models/eventModel.js";
-import UserModel from "./models/userModel.js"; // مهم جداً
+import UserModel from "./models/UserModel.js"; // مهم جداً
 import * as ENV from "./config.js";
 import SavedJobModel from "./models/SavedJobModel.js";
 import jobRoutes from "./routes/jobRoutes.js";
